@@ -5,10 +5,10 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
-        <title>vocabCLI.modules.Report - vocabCLI 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+        <title>vocabCLI.modules.Banner - vocabCLI 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../../../static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -185,40 +185,66 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for vocabCLI.modules.Report</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+          <h1>Source code for vocabCLI.modules.Banner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">platform</span> <span class="kn">import</span> <span class="n">platform</span><span class="p">,</span> <span class="n">system</span>
 
-<span class="kn">from</span> <span class="nn">Database</span> <span class="kn">import</span> <span class="n">createConnection</span>
-<span class="kn">from</span> <span class="nn">fpdf</span> <span class="kn">import</span> <span class="n">FPDF</span>
-<span class="kn">from</span> <span class="nn">ImportExport</span> <span class="kn">import</span> <span class="n">PDF</span>
+<span class="kn">from</span> <span class="nn">rich.align</span> <span class="kn">import</span> <span class="n">Align</span>
+<span class="kn">from</span> <span class="nn">rich.panel</span> <span class="kn">import</span> <span class="n">Panel</span>
+<span class="kn">from</span> <span class="nn">rich.text</span> <span class="kn">import</span> <span class="n">Text</span>
 
-<span class="c1"># todo @anay - formatting can be improved, add color, styles and emojis.</span>
-<span class="c1"># todo @anay - complete the functions below</span>
-
-
-<div class="viewcode-block" id="generate_text_report"><a class="viewcode-back" href="../../../vocabCLI.modules.html#vocabCLI.modules.Report.generate_text_report">[docs]</a><span class="k">def</span> <span class="nf">generate_text_report</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Generates a text report&quot;&quot;&quot;</span>
-
-    <span class="n">pdf</span> <span class="o">=</span> <span class="n">PDF</span><span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;mm&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">)</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">set_auto_page_break</span><span class="p">(</span><span class="n">auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s2">&quot;helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-    <span class="n">conn</span> <span class="o">=</span> <span class="n">createConnection</span><span class="p">()</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s2">&quot;TextReport.pdf&quot;</span><span class="p">)</span></div>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">__app_name__</span><span class="p">,</span> <span class="n">__version__</span>
 
 
-<div class="viewcode-block" id="generate_graph_report"><a class="viewcode-back" href="../../../vocabCLI.modules.html#vocabCLI.modules.Report.generate_graph_report">[docs]</a><span class="k">def</span> <span class="nf">generate_graph_report</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Generates a graph report&quot;&quot;&quot;</span>
+<span class="c1"># no tests for this function as it is not called anywhere in the command directly</span>
+<div class="viewcode-block" id="get_terminal_width"><a class="viewcode-back" href="../../../vocabCLI.modules.html#vocabCLI.modules.Banner.get_terminal_width">[docs]</a><span class="k">def</span> <span class="nf">get_terminal_width</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the width of the terminal.</span>
 
-    <span class="n">pdf</span> <span class="o">=</span> <span class="n">PDF</span><span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;mm&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">)</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">set_auto_page_break</span><span class="p">(</span><span class="n">auto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">add_page</span><span class="p">()</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="s2">&quot;helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-    <span class="n">conn</span> <span class="o">=</span> <span class="n">createConnection</span><span class="p">()</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s2">&quot;TextReport.pdf&quot;</span><span class="p">)</span>
-    <span class="n">pdf</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s2">&quot;GraphReport.pdf&quot;</span><span class="p">)</span></div>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: width of the terminal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="mi">80</span>
+
+    <span class="k">if</span> <span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;windows&quot;</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">width</span></div>
+
+
+<div class="viewcode-block" id="print_banner"><a class="viewcode-back" href="../../../vocabCLI.modules.html#vocabCLI.modules.Banner.print_banner">[docs]</a><span class="k">def</span> <span class="nf">print_banner</span><span class="p">(</span><span class="n">console</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prints the banner of the application.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        console (Console): Rich console object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">banner</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">             _    __                     __            __                       ____          _  __     __           </span>
+<span class="s2">            | |  / /____   _____ ____ _ / /_   __  __ / /____ _ _____ __  __   / __ ) __  __ (_)/ /____/ /___   _____</span>
+<span class="s2">            | | / // __ \ / ___// __ `// __ \ / / / // // __ `// ___// / / /  / __  |/ / / // // // __  // _ \ / ___/</span>
+<span class="s2">            | |/ // /_/ // /__ / /_/ // /_/ // /_/ // // /_/ // /   / /_/ /  / /_/ // /_/ // // // /_/ //  __// /    </span>
+<span class="s2">            |___/ \____/ \___/ \__,_//_.___/ \__,_//_/ \__,_//_/    \__, /  /_____/ \__,_//_//_/ \__,_/ \___//_/     </span>
+<span class="s2">                                                                   /____/                                            </span>
+<span class="s2">            &quot;&quot;&quot;</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">get_terminal_width</span><span class="p">()</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
+        <span class="n">Align</span><span class="p">(</span>
+            <span class="n">Text</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">),</span>
+            <span class="n">vertical</span><span class="o">=</span><span class="s2">&quot;middle&quot;</span><span class="p">,</span>
+            <span class="n">align</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+        <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+        <span class="n">subtitle</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[bold blue]v.</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2"> by Atharva &amp; Anay[/bold blue]&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span></div>
 </pre></div>
         </article>
       </div>
@@ -251,12 +277,12 @@
       
     </aside>
   </div>
-</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
-    <script src="../../../_static/scripts/furo.js"></script>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../static/documentation_options.js"></script>
+    <script src="../../../static/jquery.js"></script>
+    <script src="../../../static/underscore.js"></script>
+    <script src="../../../static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../static/doctools.js"></script>
+    <script src="../../../static/sphinx_highlight.js"></script>
+    <script src="../../../static/scripts/furo.js"></script>
     </body>
 </html>
